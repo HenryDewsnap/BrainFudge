@@ -3,8 +3,19 @@
 #include <vector>
 #include <map>
 
+/*BrainFuDGE Commands:
+> = incriment memory pointer
+< = decrement memory pointer
++ = incriment value stored at memory pointer
+- = decriment value stored at memory pointer
+[ = start loop (with current mem address != 0 as its condition)
+] = checks loop conditions, returns if false, continues if true
+, = gets single character from CLI
+. = writes single char to CLI
+*/
+
 class interpreter {
-    //Brain fuDGE Functions.
+    //Brain FuDGE Functions.
     private:
         void imp() { memory_pointer += 1; if (memory_pointer >= 256) { memory_pointer = 0; } }; //Incriment Mem Pointer
         void dmp() { memory_pointer -= 1; if (memory_pointer < 0) { memory_pointer =  255; } }; //Decrement Mem Pointer
