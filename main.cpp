@@ -29,43 +29,49 @@ class interpreter {
         int loopLayer = 0;
 
     public:
-        bool logging = true;
+        bool logging = false;
         void interpret();
+        void loadProgram(std::string program);
+
+        interpreter() {
+            memory.resize(256, 0);
+        }
 };
 
 void interpreter::interpret() {
-    while (true) {
+    while (instruction_pointer <= program_data.size()) {
         if (logging) {
-            std::cout << "Instruction Pointer: " << instruction_pointer << std::endl;
-            std::cout << "Memory Pointer: " << memory_pointer << std::endl;
-            std::cout << "Current Address Value: " << memory.at(memory_pointer) << std::endl;
+            std::cout << "[BrainFuck]: Instruction Pointer: " << instruction_pointer << std::endl;
+            std::cout << "[BrainFuck]: Memory Pointer: " << memory_pointer << std::endl;
+            std::cout << "[BrainFuck]: Current Address Value: " << memory.at(memory_pointer) << std::endl;
         }
 
-        char currentInst = program_data[instruction_pointer];
+        std::string currentInst(1, program_data[instruction_pointer]);
+        
 
         //Im aware i should use a switch/case statement but they dont appear to like me very much...
-        if (currentInst == (char)">") {
+        if (currentInst == ">") {
             imp();
         }
-        if (currentInst == (char)"<") {
+        if (currentInst == "<") {
             dmp();
         }
-        if (currentInst == (char)"+") {
+        if (currentInst == "+") {
             ivs();
         }
-        if (currentInst == (char)"-") {
+        if (currentInst == "-") {
             dvs();
         }
-        if (currentInst == (char)"[") {
+        if (currentInst == "[") {
             slp();
         }
-        if (currentInst == (char)"]") {
+        if (currentInst == "]") {
             elp();
         }
-        if (currentInst == (char)",") {
+        if (currentInst == ",") {
             gtc();
         }
-        if (currentInst == (char)".") {
+        if (currentInst == ".") {
             ptc();
         }
 
@@ -73,4 +79,18 @@ void interpreter::interpret() {
     }
 }
 
+void interpreter::loadProgram(std::string program) {
+    program_data = program;
+    std::cout << "[BrainFuck]: Program Loaded" << std::endl;
+}
 
+int main() {
+    interpreter brainFuckTest;
+    brainFuckTest.logging = true;
+    
+    brainFuckTest.loadProgram(
+        ""
+        );
+
+    brainFuckTest.interpret();
+}
