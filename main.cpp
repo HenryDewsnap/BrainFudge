@@ -3,8 +3,6 @@
 #include <vector>
 #include <map>
 
-using funcMap = std::map<std::string, std::function<void()>>;
-
 class interpreter {
     //Brain Fuck Functions.
     private:
@@ -31,12 +29,47 @@ class interpreter {
         int loopLayer = 0;
 
     public:
+        bool logging = true;
         void interpret();
 };
 
 void interpreter::interpret() {
     while (true) {
-        
+        if (logging) {
+            std::cout << "Instruction Pointer: " << instruction_pointer << std::endl;
+            std::cout << "Memory Pointer: " << memory_pointer << std::endl;
+            std::cout << "Current Address Value: " << memory.at(memory_pointer) << std::endl;
+        }
+
+        char currentInst = program_data[instruction_pointer];
+
+        //Im aware i should use a switch/case statement but they dont appear to like me very much...
+        if (currentInst == (char)">") {
+            imp();
+        }
+        if (currentInst == (char)"<") {
+            dmp();
+        }
+        if (currentInst == (char)"+") {
+            ivs();
+        }
+        if (currentInst == (char)"-") {
+            dvs();
+        }
+        if (currentInst == (char)"[") {
+            slp();
+        }
+        if (currentInst == (char)"]") {
+            elp();
+        }
+        if (currentInst == (char)",") {
+            gtc();
+        }
+        if (currentInst == (char)".") {
+            ptc();
+        }
+
+        instruction_pointer += 1;
     }
 }
 
