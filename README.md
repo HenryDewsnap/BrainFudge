@@ -1,2 +1,2 @@
 # BrainFudge
-A simple C++ brain fu** interpreter 
+A simple C++ brain fuDGE interpreter 
