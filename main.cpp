@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <vector>
 #include <math.h>
-#include <map>
 
 /*BrainFuDGE Commands:
 > = incriment memory pointer
@@ -74,13 +73,17 @@ void interpreter::interpret() {
         
         //Im aware i should use a switch/case statement but they dont appear to like me very much...
         if (currentInst == ">") { imp(); }
-        if (currentInst == "<") { dmp(); } 
-        if (currentInst == "+") { ivs(); } 
-        if (currentInst == "-") { dvs(); } 
-        if (currentInst == "[") { slp(); } 
-        if (currentInst == "]") { elp(); } 
-        if (currentInst == ",") { gtc(); } 
+        if (currentInst == "<") { dmp(); }
+        if (currentInst == "+") { ivs(); }
+        if (currentInst == "-") { dvs(); }
+        if (currentInst == "[") { slp(); }
+        if (currentInst == "]") { elp(); }
+        if (currentInst == ",") { gtc(); }
         if (currentInst == ".") { ptc(); }
+
+        else {
+            std::cout << "unrecognised input: " << currentInst << std::endl;
+        }
         
         instruction_pointer += 1;
 
