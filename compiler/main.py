@@ -33,10 +33,9 @@ def zeroMemValue(compObject, args):
 def forLoop(compObject, args): ##Args: 0: set value for I, 1: pre-compiled BF code, 2: Steps (ints supported only).
     zeroMemValue(compObject, args)
     add(compObject, args)
-    ##Find a way to pre-compile args[1] when you wake up idiot.
+    startMemAddr = compObject.memoryPointer
 
-    compObject.brainFuDGE += "[" + args[1] + "-"*int(args[2]) + "]"
-
+    
 
 
 
@@ -79,7 +78,22 @@ def parseFunctions(func):
     return {"name":funcName, "args":args}
 
 
+def compileToBrainFuDGE(compObject, parsedCodeLine):
+    try:
+        globals()[parsedCodeLine["name"]](compObject, parsedCodeLine["args"])
+        
+    except:
+        print(f"Error Compiling function:   {parsedCodeLine['name']}   WITH   args:   {parsedCodeLine['args']}")
+        return "COMPILATION FAILED"
 
+def parseCode(code):
+    parsedCode = []
+    for line in code:
+        try:
+            parsedCode.append(parseFunctions(line))
+        except:
+            print(f"Exception whilst parsing: {line}")
+    return parsedCode
 
 class compiler:
     def __init__(self, codeData): ##Code is an array of functions (defined as strings.)
@@ -88,25 +102,12 @@ class compiler:
         self.parsedCode = []
         self.brainFuDGE = ""
 
-    def parseCode(self):
-        for line in self.code:
-            try:
-                self.parsedCode.append(parseFunctions(line))
-            except:
-                print(f"Exception whilst parsing: {line}")
+    def compileCode(self):
+        self.parsedCode = parseCode(self.code)
+        for line in self.parsedCode:
+            compileToBrainFuDGE(self, line)
+    
 
-    def CompileCode(self):
-        for parsedCodeLine in self.parsedCode:
-            try:
-                globals()[parsedCodeLine["name"]](self, parsedCodeLine["args"])
-                
-            except:
-                print(f"Error Compiling function:   {parsedCodeLine['name']}   WITH   args:   {parsedCodeLine['args']}")
-                return "COMPILATION FAILED"
-            
-        return "COMPILATION SUCCESSFUL"
-
-compilerObj = compiler(["sub(10)", "setMemAddr(10)"])
-compilerObj.parseCode()
-compilerObj.CompileCode()
+compilerObj = compiler(["forLoop(2, add[10], 10, sub[10], 10)"])
+compilerObj.compileCode()
 print(compilerObj.brainFuDGE)
