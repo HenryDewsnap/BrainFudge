@@ -1,5 +1,6 @@
 #include <functional>
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include <math.h>
 #include <map>
@@ -117,7 +118,8 @@ int main() {
 
     brainFuDGETest.interpret();
 
-    std::cin; //So the console doesnt close after executing lol.
+    system("pause"); //So the console doesnt close after executing lol.
+                     //Only works on windows so umm... fix it i guess if you're on arch/unix based systems lol.
 }
 /* Example Program
 "+++++[>+++++[.-]<-]"
