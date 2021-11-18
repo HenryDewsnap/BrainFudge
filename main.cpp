@@ -1,6 +1,7 @@
 #include <functional>
 #include <iostream>
 #include <vector>
+#include <math.h>
 #include <map>
 
 /*BrainFuDGE Commands:
@@ -54,6 +55,8 @@ class interpreter {
         std::vector<int> conditionAddr;
         int loopLayer = 0;
 
+        void interpreterLogging();
+
     public:
         bool logging = false;
         void interpret();
@@ -67,16 +70,7 @@ class interpreter {
 void interpreter::interpret() {
     while (instruction_pointer <= program_data.size()) {
         std::string currentInst(1, program_data[instruction_pointer]);
-
-        if (logging == true) {
-            std::cout << "" << std::endl;
-            std::cout << "[BrainFuDGE]: Instruction Pointer: " << instruction_pointer << std::endl;
-            std::cout << "[BrainFuDGE]: Memory Pointer: " << memory_pointer << std::endl;
-            std::cout << "[BrainFuDGE]: Current Address Value: " << memory.at(memory_pointer) << std::endl;
-            std::cout << "[BrainFuDGE]: Current Instruction: " << currentInst <<  std::endl;
-            std::cout << "" << std::endl;
-        }
-
+        
         //Im aware i should use a switch/case statement but they dont appear to like me very much...
         if (currentInst == ">") { imp(); }
         if (currentInst == "<") { dmp(); } 
@@ -86,8 +80,10 @@ void interpreter::interpret() {
         if (currentInst == "]") { elp(); } 
         if (currentInst == ",") { gtc(); } 
         if (currentInst == ".") { ptc(); }
-
+        
         instruction_pointer += 1;
+
+        interpreterLogging();
     }
 }
 
@@ -96,29 +92,42 @@ void interpreter::loadProgram(std::string program) {
     std::cout << "[BrainFuDGE]: Program Loaded" << std::endl;
 }
 
+void interpreter::interpreterLogging() {
+    if (logging == true) {
+        std::cout << std::endl;
+        std::cout << "CURRENT INSTRUCTION: " << instruction_pointer << std::endl;
+        std::cout << "  Memory Pointer: " << memory_pointer << std::endl;
+        std::cout << "  Memory Value At Pointer: " << memory.at(memory_pointer) << std::endl;
+        std::cout << "  Loop Depth: " << loopLayer << std::endl;
+        std::cout << std::endl;
+    }
+}
+
 
 
 int main() {
     interpreter brainFuDGETest;
     brainFuDGETest.logging = false;
 
-    brainFuDGETest.loadProgram("+++++[>+++++[.-]<-]");
+    std::string program;
+    std::cout << "Enter Your Program: " << std::endl;
+    std::cin >> program;
+
+    brainFuDGETest.loadProgram(program);
 
     brainFuDGETest.interpret();
+
+    std::cin; //So the console doesnt close after executing lol.
 }
 /* Example Program
 "+++++[>+++++[.-]<-]"
 
-
-mem[0] = 5;
-while mem[0] != 0{
-    mem[1] = 5;
-    while mem[1] != 0{
-        out(mem[1])
-        mem[1] -= 1;
-    }
-    mem[0] -= 1;
+mem[0] = 5
+while mem[0] != 0 {
+    mem[1] += 1
+    mem[0] -= 1
 }
+print(mem[1])
 
 This program has no purpose, it is just here for demonstrational purposes and to demonstrate the interpreteres ability to nest loops.
 */
