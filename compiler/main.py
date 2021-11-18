@@ -1,3 +1,39 @@
+def add(compObject, args):
+    compObject.brainFuDGE += "+"*int(args[0])
+
+def sub(compObject, args):
+    compObject.brainFuDGE += "-"*int(args[0])
+
+def setMemAddr(compObject, args):
+    while compObject.memoryPointer != int(args[0]):
+        if compObject.memoryPointer > int(args[0]):
+            compObject.brainFuDGE += "<"
+            compObject.memoryPointer -= 1
+        else:
+            compObject.brainFuDGE += ">"
+            compObject.memoryPointer += 1
+
+def incMemAddr(compObject, args):
+    compObject.brainFuDGE += ">"
+    compObject.memoryPointer += 1
+
+def decMemAddr(compObject, args):
+    compObject.brainFuDGE += "<"
+    compObject.memoryPointer -= 1
+
+def forLoop(compObject, args):
+    pass
+
+
+
+
+
+
+
+
+
+
+
 def parseFunctions(func):
     funcChars = list(func.replace(" ", ""))
     funcName = ""
@@ -30,11 +66,14 @@ def parseFunctions(func):
     return {"name":funcName, "args":args}
 
 
+
+
 class compiler:
     def __init__(self, codeData): ##Code is an array of functions (defined as strings.)
         self.memoryPointer = 0 #The compiler needs to keep track of the memory pointer so it knows how many of certain operations to perform.
         self.code = codeData
         self.parsedCode = []
+        self.brainFuDGE = ""
 
     def parseCode(self):
         for line in self.code:
@@ -46,7 +85,7 @@ class compiler:
     def CompileCode(self):
         for parsedCodeLine in self.parsedCode:
             try:
-                globals()[parsedCodeLine["name"]](parsedCodeLine["args"])
+                globals()[parsedCodeLine["name"]](self, parsedCodeLine["args"])
                 
             except:
                 print(f"Error Compiling function:   {parsedCodeLine['name']}   WITH   args:   {parsedCodeLine['args']}")
@@ -54,6 +93,7 @@ class compiler:
             
         return "COMPILATION SUCCESSFUL"
 
-compilerObj = compiler(["printtt('Hello')", "wait(10)", "print('Ah')"])
+compilerObj = compiler(["sub(10)", "setMemAddr(10)"])
 compilerObj.parseCode()
 compilerObj.CompileCode()
+print(compilerObj.brainFuDGE)
