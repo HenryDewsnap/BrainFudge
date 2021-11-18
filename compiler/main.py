@@ -1,5 +1,3 @@
-
-
 def parseFunctions(func):
     funcChars = list(func.replace(" ", ""))
     funcName = ""
@@ -52,7 +50,10 @@ class compiler:
                 
             except:
                 print(f"Error Compiling function:   {parsedCodeLine['name']}   WITH   args:   {parsedCodeLine['args']}")
+                return "COMPILATION FAILED"
+            
+        return "COMPILATION SUCCESSFUL"
 
-compilerObj = compiler(["print('Hello')", "wait(10)", "print('Ah')"])
+compilerObj = compiler(["printtt('Hello')", "wait(10)", "print('Ah')"])
 compilerObj.parseCode()
 compilerObj.CompileCode()
