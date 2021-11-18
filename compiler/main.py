@@ -1,8 +1,10 @@
 def add(compObject, args):
     compObject.brainFuDGE += "+"*int(args[0])
 
+
 def sub(compObject, args):
     compObject.brainFuDGE += "-"*int(args[0])
+
 
 def setMemAddr(compObject, args):
     while compObject.memoryPointer != int(args[0]):
@@ -13,16 +15,27 @@ def setMemAddr(compObject, args):
             compObject.brainFuDGE += ">"
             compObject.memoryPointer += 1
 
+
 def incMemAddr(compObject, args):
     compObject.brainFuDGE += ">"
     compObject.memoryPointer += 1
+
 
 def decMemAddr(compObject, args):
     compObject.brainFuDGE += "<"
     compObject.memoryPointer -= 1
 
-def forLoop(compObject, args):
-    pass
+
+def zeroMemValue(compObject, args):
+    compObject.brainFuDGE += "[-]"
+
+
+def forLoop(compObject, args): ##Args: 0: set value for I, 1: pre-compiled BF code, 2: Steps (ints supported only).
+    zeroMemValue(compObject, args)
+    add(compObject, args)
+    ##Find a way to pre-compile args[1] when you wake up idiot.
+
+    compObject.brainFuDGE += "[" + args[1] + "-"*int(args[2]) + "]"
 
 
 
