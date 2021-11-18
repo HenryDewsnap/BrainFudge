@@ -80,10 +80,6 @@ void interpreter::interpret() {
         if (currentInst == "]") { elp(); }
         if (currentInst == ",") { gtc(); }
         if (currentInst == ".") { ptc(); }
-
-        else {
-            std::cout << "unrecognised input: " << currentInst << std::endl;
-        }
         
         instruction_pointer += 1;
 
