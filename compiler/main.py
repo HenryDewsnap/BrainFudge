@@ -1,113 +1,107 @@
-def add(compObject, args):
-    compObject.brainFuDGE += "+"*int(args[0])
+import os
 
+colours = {
+    "default":"\033[0;37;40m",
+    "red":"\033[1;31;40m",
+    "yellow":"\033[1;33;40m",
+    "green":"\033[1;32;40m"
+}
 
-def sub(compObject, args):
-    compObject.brainFuDGE += "-"*int(args[0])
+functions = {
+    "add":{"args":1,},                #Adds a certain ammount to the current cell.
+    "sub":{"args":1},                #Subs a certain ammount from the current cell.
+    "zero":{"args":0},               #Sets the current cell to 0.
 
+    "incMemCell":{"args":0},
+    "decMemCell":{"args":0},
+    "setMemCell":{"args":1},         #Updates the memory cell to a spesific location.
 
-def setMemAddr(compObject, args):
-    while compObject.memoryPointer != int(args[0]):
-        if compObject.memoryPointer > int(args[0]):
-            compObject.brainFuDGE += "<"
-            compObject.memoryPointer -= 1
-        else:
-            compObject.brainFuDGE += ">"
-            compObject.memoryPointer += 1
+    "startLoop":{"args":2},          #First arg is the ammount of iterations and the second is the address of the incrimentor.
+    "endLoop":{"args":0} #Checks the pointer of the current loop layer to see whether it should continue or recur back to the start of the loop.
 
+}
 
-def incMemAddr(compObject, args):
-    compObject.brainFuDGE += ">"
-    compObject.memoryPointer += 1
-
-
-def decMemAddr(compObject, args):
-    compObject.brainFuDGE += "<"
-    compObject.memoryPointer -= 1
-
-
-def zeroMemValue(compObject, args):
-    compObject.brainFuDGE += "[-]"
-
-
-def forLoop(compObject, args): ##Args: 0: set value for I, 1: pre-compiled BF code, 2: Steps (ints supported only).
-    zeroMemValue(compObject, args)
-    add(compObject, args)
-    startMemAddr = compObject.memoryPointer
-
-    
+def compilerLog(msg, colour="default", logType="default"):
+    if logType == "default":
+        preFix = "[Brain Fudge Compiler]: "
+    else:
+        preFix = f"[Compiler log type: {colours[colour]}{logType.upper()}{colours['default']}]: "
+    print(f"{preFix}{colours[colour]}{msg}{colours['default']}")
 
 
 
+class compile:
+    def __init__(self):
+        self.source_code = []
+        self.memory_values = []
+        self.memory_address = 0
+
+        self.parsed_code = []
+        self.variables_and_locations = {}
 
 
+    ##Takes the code and seperates it into its key values.
+    def parseCode(self):
+        for function in self.source_code: ##Each line represents a new function with new arguments (because I don't know how to make an actual good programming language B) ).
+            try:
+                function = function.replace(" ", "")
 
+                functionInfo = {"name":"", "args":[]}
 
+                functionPtr = 0
+                functionChars = list(function)
+                while functionChars[functionPtr] != "(":
+                    functionInfo["name"] += functionChars[functionPtr]
+                    functionPtr += 1
 
+                midArg = False
+                currentArg = ""
+                argCount = functions[functionInfo["name"]]["args"]
+                foundArgs = 0
+                functionPtr += 1
+                while foundArgs < argCount and functionChars[functionPtr] != ")":
+                    if functionChars[functionPtr] != ",":
+                        currentArg += functionChars[functionPtr]
+                        midArg = True
+                    
+                    else:
+                        functionInfo["args"].append(currentArg)
+                        currentArg = ""
+                        foundArgs += 1
+                    
+                    if foundArgs >= argCount:
+                        midArg = False
 
+                    functionPtr += 1
 
-def parseFunctions(func):
-    funcChars = list(func.replace(" ", ""))
-    funcName = ""
-    args = []
+                if midArg == True:
+                    functionInfo["args"].append(currentArg)
+                
+                self.parsed_code.append(functionInfo)
 
-    funcPtr = 0
-    while funcChars[funcPtr] != "(": #Iterates through the function to determine the functions name.
-        funcName += funcChars[funcPtr]
-        funcPtr += 1
-
-    findingArgs = True
-    while (findingArgs):
-        currentArg = ""
-        funcPtr += 1
-        while funcChars[funcPtr] != ",":
-            if funcChars[funcPtr] == ")":
-                findingArgs = False
-                break
-            currentArg += funcChars[funcPtr]
-            funcPtr += 1
-        args.append(currentArg)
+            except:
+                compilerLog(f"failed to parse line {function}", "red", "error")    
+                exit()
         
-    for argPtr in range(len(args)):
-        try:
-            args[argPtr] = args[argPtr].replace("'", "")
+        compilerLog("successfully parsed code", "green", "success")
             
-        except:
-            args[argPtr] = args[argPtr].replace('"', "")
-
-    return {"name":funcName, "args":args}
 
 
-def compileToBrainFuDGE(compObject, parsedCodeLine):
-    try:
-        globals()[parsedCodeLine["name"]](compObject, parsedCodeLine["args"])
-        
-    except:
-        print(f"Error Compiling function:   {parsedCodeLine['name']}   WITH   args:   {parsedCodeLine['args']}")
-        return "COMPILATION FAILED"
+    #Opens the file where the program is stored
+    def loadProgram(self):
+        compilerLog(f"{os.getcwd()}", "green", "output")
+        compilerLog(f"{os.listdir()}", "green", "current dir")
 
-def parseCode(code):
-    parsedCode = []
-    for line in code:
         try:
-            parsedCode.append(parseFunctions(line))
+            self.source_code = open(input("File Path: "), "r").readlines()
+            compilerLog("file read successfully.", "green", "success")
+
         except:
-            print(f"Exception whilst parsing: {line}")
-    return parsedCode
+            compilerLog("file not found / unable to read.", "red", "error")
 
-class compiler:
-    def __init__(self, codeData): ##Code is an array of functions (defined as strings.)
-        self.memoryPointer = 0 #The compiler needs to keep track of the memory pointer so it knows how many of certain operations to perform.
-        self.code = codeData
-        self.parsedCode = []
-        self.brainFuDGE = ""
 
-    def compileCode(self):
-        self.parsedCode = parseCode(self.code)
-        for line in self.parsedCode:
-            compileToBrainFuDGE(self, line)
-    
 
-compilerObj = compiler(["forLoop(2, add[10], 10, sub[10], 10)"])
-compilerObj.compileCode()
-print(compilerObj.brainFuDGE)
+compilerObj = compile()
+compilerObj.loadProgram()
+compilerObj.parseCode()
+print(compilerObj.parsed_code)
